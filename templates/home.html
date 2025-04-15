@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Welcome to Meal Sharing App</h1>
+    
+    <h2>Active Group Orders</h2>
+    {% if active_orders %}
+        <div class="orders-list">
+            {% for order in active_orders %}
+                <div class="order-card">
+                    <h3>Order from {{ order.restaurant.name }}</h3>
+                    <p>Created by: {{ order.creator.username }}</p>
+                    <p>Delivery at: {{ order.order_time.strftime('%Y-%m-%d %H:%M') }}</p>
+                    <p>Participants: {{ order.participants|length }}</p>
+                    <a href="{{ url_for('order_details', order_id=order.id) }}" class="btn">View Details</a>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No active orders at the moment. Why not <a href="{{ url_for('create_order') }}">create one</a>?</p>
+    {% endif %}
+{% endblock %}
