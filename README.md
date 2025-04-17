@@ -2,6 +2,136 @@
 BALABABABA~WELCOME to out MealMates Project, and our goal is to help everyone eat well with limited budget :)
 This project aims to build a platform where students can form group meal orders to cut delivery fees and reduce individual dining costs. For example, users can team up to split large portions from restaurants like Chinese takeout, allowing each person to try more dishes without overspending.
 
+# 🍽️ MealMate Backend System Overview
+
+This document outlines the architecture of the MealMate backend, which powers group food ordering via user clustering, restaurant recommendation, and external data integration.
+
+---
+
+## 🗃️ Databases
+
+### 1. `user_database`
+- **Purpose**: Stores user profiles and dining preferences
+- **Primary Operations**:
+  - User registration and authentication
+  - Profile management
+  - Preference tracking
+
+### 2. `restaurant_database`
+- **Purpose**: Central repository of restaurant information
+- **Data Sources**:
+  - **Yelp API**: Basic info, ratings, categories
+  - **WorldWide Restaurant API**: Global data with descriptions
+  - **NYC Open Data**: Health inspection records and grades
+- **Merging Strategy**:
+  - Fuzzy matching on restaurant names and geographic coordinates
+
+---
+
+## 🌐 APIs
+
+### 1. `yelp_api`
+- Restaurant basic information
+- Ratings (1.0–5.0)
+- Categories
+- Geographic coordinates
+
+### 2. `worldwide_restaurants_api`
+- Global restaurant data
+- Descriptions and cuisine types
+- Address information
+
+### 3. `nyc_open_data_api`
+- Restaurant inspection data
+- Health grades (A, B, C, N/A)
+- Violation descriptions
+- Critical flag indicators
+
+### 4. `internal_user_api`
+- User registration/authentication
+- Profile management
+- Preference settings
+
+---
+
+## ⏱ Scheduled Jobs
+
+### 1. `user_clustering_job`
+- **Frequency**: Daily
+- **Purpose**: Group users into dining cohorts (3–5 people)
+- **Method**: Graph-theoretic clustering
+- **Factors**: Preference similarity, geographic proximity
+
+### 2. `recommendation_job`
+- **Frequency**: Daily (post-clustering)
+- **Purpose**: Suggest restaurants to user groups
+- **Method**: Collaborative filtering
+- **Factors**: Group preferences, ratings, health grades
+
+---
+
+## ⚙️ Workers
+
+### 1. `notification_worker`
+- Sends user alerts and group invites
+- Dispatches recommendation notifications
+
+### 2. `data_sync_worker`
+- Syncs restaurant data from external APIs
+- Ensures freshness and reliability
+
+---
+
+## 🎯 Event Handlers
+
+### 1. `user_activity_handler`
+- Tracks engagement with recommendations
+- Updates preference models based on feedback
+
+### 2. `group_event_handler`
+- Handles group formation and dissolution events
+
+---
+
+## 🔄 Data Pipelines
+
+### 1. `restaurant_integration_pipeline`
+- **Stages**:
+  - Data collection (Yelp, WorldWide, NYC)
+  - Entity resolution (duplicate detection)
+  - Data normalization
+  - Record merging with confidence scoring
+
+### 2. `user_preference_pipeline`
+- **Stages**:
+  - Explicit preference collection
+  - Implicit inference from behavior
+  - Preference model updates
+
+---
+
+## 🔌 Service Integrations
+
+### 1. `geolocation_service`
+- Distance calculations
+- Travel time optimization
+
+### 2. `review_aggregator`
+- Combines multi-platform reviews
+- Normalizes rating scales
+
+### 3. `reservation_connector`
+- Interfaces with restaurant booking systems
+- Checks table availability
+
+---
+
+## 👨‍💻 Authors & Maintainers
+
+Built by the MealMate backend engineering team. Contributions welcome!
+
+
+
 # 🍱 MealMate Data Analytics Engine
 
 This module powers the intelligent user-matching system behind MealMate, a group food ordering assistant. It enables personalized and scalable user clustering based on dining preferences using lightweight, interpretable machine learning.
