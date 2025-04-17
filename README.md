@@ -128,9 +128,7 @@ This document outlines the architecture of the MealMate backend, which powers gr
 
 ## 👨‍💻 Authors & Maintainers
 
-Built by the MealMate backend engineering team. Contributions welcome!
-
-
+Yufei Wu & Claude :>
 
 # 🍱 MealMate Data Analytics Engine
 
@@ -217,4 +215,10 @@ Install dependencies with:
 
 ```bash
 pip install scikit-learn matplotlib pandas numpy
+
+---
+
+## 👨‍💻 Authors & Maintainers
+
+Lizere Yun & ChatGPT
 
