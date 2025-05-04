@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Create Group Order - MealMates{% endblock %}
+
+{% block content %}
+<div class="create-order-container">
+    <h2 class="page-title">Create a Group Order</h2>
+    <p class="section-description">Set up a meal order and invite others to join you!</p>
+
+    <form method="POST" action="{{ url_for('create_order') }}" class="order-form">
+        <div class="form-group">
+            <label for="restaurant">Restaurant</label>
+            <input type="text" id="restaurant" name="restaurant" required placeholder="Enter restaurant name">
+        </div>
+
+        <div class="form-group">
+            <label for="location">Pickup/Delivery Location</label>
+            <input type="text" id="location" name="location" required placeholder="Where will the food be delivered/picked up?">
+        </div>
+
+        <div class="form-row">
+            <div class="form-group half-width">
+                <label for="order_date">Date</label>
+                <input type="date" id="order_date" name="order_date" required>
+            </div>
+            <div class="form-group half-width">
+                <label for="order_time">Time</label>
+                <input type="time" id="order_time" name="order_time" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="order_link">Restaurant Menu Link (Optional)</label>
+            <input type="url" id="order_link" name="order_link" placeholder="https://restaurant-website.com/menu">
+        </div>
+
+        <div class="form-row">
+            <div class="form-group half-width">
+                <label for="min_people">Minimum People</label>
+                <input type="number" id="min_people" name="min_people" min="2" value="2">
+            </div>
+            <div class="form-group half-width">
+                <label for="max_people">Maximum People</label>
+                <input type="number" id="max_people" name="max_people" min="2" value="5">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" name="description" rows="4" placeholder="Share any details about your order plan, preferences, or requirements"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="payment_method">Payment Collection Method</label>
+            <select id="payment_method" name="payment_method" required>
+                <option value="" disabled selected>Select a payment method</option>
+                <option value="cash">Cash on delivery</option>
+                <option value="venmo">Venmo</option>
+                <option value="paypal">PayPal</option>
+                <option value="other">Other (specify in description)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label class="checkbox-container">
+                <input type="checkbox" id="is_public" name="is_public" checked>
+                <span class="checkmark"></span>
+                Make this order public (visible to all MealMates users)
+            </label>
+        </div>
+
+        <div class="button-group">
+            <button type="submit" class="primary-button">Create Group</button>
+            <a href="{{ url_for('home') }}" class="secondary-button">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<div class="info-box">
+    <h3><i class="fas fa-info-circle"></i> How Group Orders Work</h3>
+    <ul>
+        <li>Create a group order and specify details</li>
+        <li>Other users can join your group until it's full</li>
+        <li>Coordinate with group members through the chat</li>
+        <li>Place the order and collect payments</li>
+        <li>Enjoy your meal together!</li>
+    </ul>
+</div>
+{% endblock %}

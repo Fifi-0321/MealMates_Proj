@@ -1,6 +1,6 @@
 /* Import Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap');
 
 /* Font Awesome */
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
@@ -13,12 +13,10 @@
 }
 
 body {
-    font-family: 'Poppins', sans-serif;
-    background-color: #f8f9fa;
+    font-family: 'Montserrat', sans-serif;
+    background-color: #fcfcfc;
     color: #333;
     line-height: 1.6;
-    background-image: url('data:image/svg+xml;utf8,<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z" fill="%23f0f0f0" fill-opacity="0.3" fill-rule="evenodd"/></svg>');
-    background-size: 300px;
 }
 
 .container {
@@ -29,10 +27,10 @@ body {
 
 /* Navigation */
 nav {
-    background: linear-gradient(135deg, #ff7e5f, #feb47b);
+    background: #a68ad6;
     color: white;
     padding: 15px 0;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     position: sticky;
     top: 0;
     z-index: 100;
@@ -53,13 +51,14 @@ nav .container {
 }
 
 .logo i {
-    font-size: 24px;
+    font-size: 22px;
 }
 
 .logo h1 {
-    font-family: 'Pacifico', cursive;
+    font-family: 'Playfair Display', serif;
     font-size: 24px;
-    font-weight: 400;
+    font-weight: 500;
+    letter-spacing: 0.5px;
 }
 
 .nav-links {
@@ -72,12 +71,12 @@ nav .container {
     text-decoration: none;
     font-weight: 500;
     padding: 8px 12px;
-    border-radius: 20px;
+    border-radius: 4px;
     transition: all 0.3s ease;
 }
 
 .nav-links a:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.15);
 }
 
 /* Flash messages */
@@ -88,11 +87,11 @@ nav .container {
 
 .flash-message {
     padding: 15px 20px;
-    border-radius: 8px;
+    border-radius: 4px;
     margin-bottom: 10px;
-    background-color: #d4edda;
-    border-left: 5px solid #28a745;
-    color: #155724;
+    background-color: #eee6ff;
+    border-left: 3px solid #a68ad6;
+    color: #555;
     animation: slideIn 0.3s ease;
 }
 
@@ -110,19 +109,19 @@ nav .container {
 /* Auth Container */
 .auth-container {
     max-width: 700px;
-    margin: 40px auto;
+    margin: 50px auto;
     padding: 0 20px;
 }
 
 .auth-card {
     background: white;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
     overflow: hidden;
 }
 
 .auth-header {
-    background: linear-gradient(135deg, #ff7e5f, #feb47b);
+    background: #a68ad6;
     color: white;
     padding: 30px;
     text-align: center;
@@ -130,35 +129,38 @@ nav .container {
 }
 
 .food-icon {
-    width: 80px;
-    height: 80px;
+    width: 70px;
+    height: 70px;
     background: white;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto 20px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
 }
 
 .food-icon i {
-    font-size: 40px;
-    color: #ff7e5f;
+    font-size: 32px;
+    color: #a68ad6;
 }
 
 .auth-header h1 {
+    font-family: 'Playfair Display', serif;
     font-size: 28px;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
+    font-weight: 600;
 }
 
 .tagline {
     font-size: 16px;
     opacity: 0.9;
+    font-weight: 300;
 }
 
 /* Form Styling */
 .auth-form {
-    padding: 30px;
+    padding: 35px;
 }
 
 .form-group {
@@ -174,7 +176,7 @@ nav .container {
 
 .form-group label i {
     margin-right: 8px;
-    color: #ff7e5f;
+    color: #a68ad6;
 }
 
 .form-group input[type="text"],
@@ -182,20 +184,20 @@ nav .container {
 .form-group input[type="password"] {
     width: 100%;
     padding: 12px 15px;
-    border: 2px solid #e1e1e1;
-    border-radius: 8px;
+    border: 1px solid #e1e1e1;
+    border-radius: 4px;
     font-size: 16px;
     transition: all 0.3s ease;
 }
 
 .form-group input:focus {
-    border-color: #ff7e5f;
+    border-color: #a68ad6;
     outline: none;
-    box-shadow: 0 0 0 3px rgba(255, 126, 95, 0.2);
+    box-shadow: 0 0 0 3px rgba(166, 138, 214, 0.1);
 }
 
 .form-group input::placeholder {
-    color: #aaa;
+    color: #bbb;
 }
 
 /* Cuisine preferences */
@@ -211,13 +213,13 @@ nav .container {
     align-items: center;
     background: #f8f9fa;
     padding: 8px 15px;
-    border-radius: 20px;
+    border-radius: 4px;
     cursor: pointer;
     transition: all 0.3s ease;
 }
 
 .cuisine-checkbox:hover {
-    background: #f0f0f0;
+    background: #eee6ff;
 }
 
 .cuisine-checkbox input {
@@ -233,7 +235,7 @@ nav .container {
 }
 
 .forgot-password {
-    color: #ff7e5f;
+    color: #8a6cc9;
     text-decoration: none;
 }
 
@@ -245,12 +247,12 @@ nav .container {
 .btn {
     display: inline-block;
     padding: 12px 20px;
-    background: linear-gradient(135deg, #ff7e5f, #feb47b);
+    background: #a68ad6;
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 4px;
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease;
     text-align: center;
@@ -258,9 +260,8 @@ nav .container {
 }
 
 .btn:hover {
-    background: linear-gradient(135deg, #ff6f4c, #fea768);
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(255, 126, 95, 0.3);
+    background: #8a6cc9;
+    box-shadow: 0 3px 10px rgba(138, 108, 201, 0.2);
 }
 
 .btn i {
@@ -272,11 +273,11 @@ nav .container {
     padding: 20px 30px;
     text-align: center;
     border-top: 1px solid #f0f0f0;
-    color: #777;
+    color: #666;
 }
 
 .auth-links a {
-    color: #ff7e5f;
+    color: #8a6cc9;
     text-decoration: none;
     font-weight: 500;
 }
@@ -296,14 +297,14 @@ nav .container {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 20px;
-    background: #f8f9fa;
+    background: #f9f7fc;
     padding: 30px;
     text-align: center;
 }
 
 .benefit-item i {
-    font-size: 24px;
-    color: #ff7e5f;
+    font-size: 22px;
+    color: #a68ad6;
     margin-bottom: 10px;
 }
 
@@ -314,7 +315,7 @@ nav .container {
 
 /* Current Orders */
 .current-orders {
-    background: #f8f9fa;
+    background: #f9f7fc;
     padding: 20px 30px;
     border-top: 1px solid #f0f0f0;
 }
@@ -323,10 +324,11 @@ nav .container {
     font-size: 18px;
     color: #555;
     margin-bottom: 15px;
+    font-family: 'Playfair Display', serif;
 }
 
 .current-orders h3 i {
-    color: #ff7e5f;
+    color: #a68ad6;
     margin-right: 8px;
 }
 
@@ -342,8 +344,8 @@ nav .container {
     justify-content: space-between;
     background: white;
     padding: 12px 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
 }
 
 .restaurant {
@@ -351,7 +353,7 @@ nav .container {
 }
 
 .time {
-    color: #ff7e5f;
+    color: #a68ad6;
     font-size: 14px;
 }
 
@@ -374,11 +376,11 @@ nav .container {
     }
     
     .food-icon i {
-        font-size: 30px;
+        font-size: 28px;
     }
     
     .auth-form {
-        padding: 20px;
+        padding: 25px;
     }
     
     .benefits {
@@ -389,7 +391,7 @@ nav .container {
 
 /* Footer */
 footer {
-    background: #333;
+    background: #3a3a3a;
     color: #fff;
     margin-top: 60px;
     padding: 50px 0 20px;
@@ -405,7 +407,8 @@ footer {
 .footer-section h3 {
     font-size: 18px;
     margin-bottom: 15px;
-    color: #ff7e5f;
+    color: #cebff0;
+    font-family: 'Playfair Display', serif;
 }
 
 .footer-section p {
@@ -428,7 +431,7 @@ footer {
 }
 
 .footer-section ul li a:hover {
-    color: #ff7e5f;
+    color: #cebff0;
 }
 
 .social-icons {
@@ -449,7 +452,7 @@ footer {
 }
 
 .social-icons a:hover {
-    background: #ff7e5f;
+    background: #a68ad6;
     transform: translateY(-3px);
 }
 
@@ -463,26 +466,29 @@ footer {
 
 /* Additional styles for the homepage */
 .hero {
-    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/static/img/food-banner.jpg');
+    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('/static/img/food-banner.jpg');
     background-size: cover;
     background-position: center;
     color: white;
-    padding: 100px 0;
+    padding: 120px 0;
     text-align: center;
-    margin-bottom: 60px;
-    border-radius: 15px;
+    margin-bottom: px;
+    border-radius: 8px;
     overflow: hidden;
 }
 
 .hero h1 {
+    font-family: 'Playfair Display', serif;
     font-size: 48px;
     margin-bottom: 20px;
+    font-weight: 600;
 }
 
 .hero p {
     font-size: 18px;
     max-width: 600px;
     margin: 0 auto 30px;
+    line-height: 1.7;
 }
 
 .cta-buttons {
@@ -493,7 +499,7 @@ footer {
 
 .btn-outline {
     background: transparent;
-    border: 2px solid white;
+    border: 1px solid white;
 }
 
 .btn-outline:hover {
@@ -509,15 +515,15 @@ footer {
 
 .order-card {
     background: white;
-    border-radius: 15px;
+    border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.07);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .order-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
 .order-img {
@@ -558,7 +564,7 @@ footer {
 
 .detail-item i {
     margin-right: 8px;
-    color: #ff7e5f;
+    color: #a68ad6;
 }
 
 .order-footer {
@@ -577,7 +583,7 @@ footer {
     width: 30px;
     height: 30px;
     border-radius: 50%;
-    background: #eee;
+    background: #f0f0f0;
     display: flex;
     align-items: center;
     justify-content: center;
