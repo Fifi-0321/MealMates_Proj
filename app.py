@@ -1,7 +1,7 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, jsonify, render_template, request, redirect, url_for, flash, session
 from datetime import datetime
 import os
-from models import db, User, Restaurant, GroupOrder, OrderParticipation, MenuItem, OrderItem
+from models import db, User, UserPreference, Restaurant, GroupOrder, OrderParticipation, MenuItem, OrderItem
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24)
@@ -62,6 +62,25 @@ def logout():
     session.pop('user_id', None)
     flash('You have been logged out')
     return redirect(url_for('home'))
+
+@app.route('/match', methods=['GET'])
+def match_user():
+    school_id = request.args.get('school_id')
+    if not school_id:
+        return jsonify({'error': 'school_id required'}), 400
+
+    matches = UserPreference.get_top_matches(school_id, top_k=5)
+    result = [
+        {
+            'school_id': u.school_id,
+            'similarity': round(score, 3),
+            'location': u.location,
+            'eat_time': u.eat_time,
+            'dietary_restrictions': u.dietary_restrictions
+        }
+        for u, score in matches
+    ]
+    return jsonify(result)
 
 @app.route('/create_order', methods=['GET', 'POST'])
 def create_order():
