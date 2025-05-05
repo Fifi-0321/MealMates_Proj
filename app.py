@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from datetime import datetime
 import os
 from models import db, User, Restaurant, GroupOrder, OrderParticipation, MenuItem, OrderItem
+from flask import jsonify
+import requests
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24)
@@ -125,6 +127,29 @@ def list_orders():
     orders = GroupOrder.query.filter_by(status='open').all()
     return render_template('list_orders.html', orders=orders)
 
+@app.route('/api/restaurants_by_zip/<zipcode>')
+def restaurants_by_zip(zipcode):
+    # Replace with a better geocoding API if available
+    resp = requests.get(f'https://nominatim.openstreetmap.org/search?postalcode={zipcode}&country=USA&format=json')
+    if not resp.json():
+        return jsonify({'restaurants': [], 'center': {'lat': 0, 'lon': 0}})
+    
+    lat = float(resp.json()[0]['lat'])
+    lon = float(resp.json()[0]['lon'])
+
+    # Sample simple radius search (customize with real distance filter)
+    nearby = Restaurant.query.all()
+    results = []
+    for r in nearby:
+        results.append({
+            'id': r.id,
+            'name': r.name,
+            'address': r.address,
+            'lat': 40.72,  # TODO: store lat/lon in DB
+            'lon': -73.99
+        })
+
+    return jsonify({'restaurants': results, 'center': {'lat': lat, 'lon': lon}})
 
 @app.route('/order/<int:order_id>')
 def order_details(order_id):
