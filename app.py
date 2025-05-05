@@ -1,18 +1,14 @@
-# app.py - Main Flask Application
-
 from flask import Flask, render_template, request, redirect, url_for, flash, session
-from flask_sqlalchemy import SQLAlchemy
-from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import os
-from models import *
+from models import db, User, Restaurant, GroupOrder, OrderParticipation, MenuItem, OrderItem
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///meal_sharing.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db = SQLAlchemy(app)
+db.init_app(app)
 
 # Routes
 @app.route('/')
