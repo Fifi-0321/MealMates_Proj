@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% block title %}Find Group Orders - MealMates{% endblock %}
+
+{% block content %}
+<div class="find-orders-container">
+    <div class="section-header">
+        <h2 class="page-title">Find Group Orders</h2>
+        <div class="filter-options">
+            <button id="toggle-filters" class="secondary-button"><i class="fas fa-filter"></i> Filters</button>
+            <div class="search-box">
+                <input type="text" id="order-search" placeholder="Search restaurants, food types...">
+                <button class="search-button"><i class="fas fa-search"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="filter-panel" id="filter-panel" style="display: none;">
+        <form id="filter-form" class="filter-form">
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label for="date-filter">Date</label>
+                    <input type="date" id="date-filter" name="date">
+                </div>
+                <div class="filter-group">
+                    <label for="time-filter">Time</label>
+                    <select id="time-filter" name="time-range">
+                        <option value="">Any time</option>
+                        <option value="morning">Morning (6am-11am)</option>
+                        <option value="lunch">Lunch (11am-2pm)</option>
+                        <option value="afternoon">Afternoon (2pm-5pm)</option>
+                        <option value="dinner">Dinner (5pm-9pm)</option>
+                        <option value="night">Late Night (9pm-6am)</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="distance-filter">Distance</label>
+                    <select id="distance-filter" name="distance">
+                        <option value="">Any distance</option>
+                        <option value="0.5">Within 0.5 miles</option>
+                        <option value="1">Within 1 mile</option>
+                        <option value="3">Within 3 miles</option>
+                        <option value="5">Within 5 miles</option>
+                    </select>
+                </div>
+            </div>
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label for="cuisine-filter">Cuisine</label>
+                    <select id="cuisine-filter" name="cuisine">
+                        <option value="">Any cuisine</option>
+                        <option value="italian">Italian</option>
+                        <option value="chinese">Chinese</option>
+                        <option value="indian">Indian</option>
+                        <option value="mexican">Mexican</option>
+                        <option value="japanese">Japanese</option>
+                        <option value="american">American</option>
+                        <option value="thai">Thai</option>
+                        <option value="mediterranean">Mediterranean</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Dietary Options</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-container">
+                            <input type="checkbox" name="vegetarian"> Vegetarian
+                            <span class="checkmark"></span>
+                        </label>
+                        <label class="checkbox-container">
+                            <input type="checkbox" name="vegan"> Vegan
+                            <span class="checkmark"></span>
+                        </label>
+                        <label class="checkbox-container">
+                            <input type="checkbox" name="gluten_free"> Gluten-free
+                            <span class="checkmark"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="filter-buttons">
+                <button type="button" class="secondary-button" id="clear-filters">Clear</button>
+                <button type="submit" class="primary-button">Apply Filters</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="orders-list">
+        {% if orders %}
+            {% for order in orders %}
+                <div class="order-card">
+                    <div class="order-header">
+                        <h3>{{ order.restaurant }}</h3>
+                        <span class="order-time">{{ order.order_date.strftime('%b %d') }} at {{ order.order_time.strftime('%I:%M %p') }}</span>
+                    </div>
+                    <div class="order-details">
+                        <p class="order-location"><i class="fas fa-map-marker-alt"></i> {{ order.location }}</p>
+                        <p class="order-description">{{ order.description }}</p>
+                        <div class="order-meta">
+                            <span class="order-people"><i class="fas fa-users"></i> {{ order.current_people }}/{{ order.max_people }} joined</span>
+                            <span class="order-host"><i class="fas fa-user"></i> Hosted by {{ order.host.username }}</span>
+                        </div>
+                    </div>
+                    <div class="order-actions">
+                        <a href="{{ url_for('order_details', order_id=order.id) }}" class="view-button">View Details</a>
+                        {% if order.host_id != session['user_id'] and order.current_people < order.max_people %}
+                            <a href="{{ url_for('join_order', order_id=order.id) }}" class="join-button">Join Group</a>
+                        {% elif order.host_id == session['user_id'] %}
+                            <span class="host-badge">You're the host</span>
+                        {% elif order.current_people >= order.max_people %}
+                            <span class="full-badge">Group full</span>
+                        {% endblock %}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-orders">
+                <i class="fas fa-utensils empty-icon"></i>
+                <h3>No group orders available</h3>
+                <p>There are no active group orders that match your criteria. Why not <a href="{{ url_for('create_order') }}">create one</a>?</p>
+            </div>
+        {% endblock %}
+    </div>
+    
+    {% if orders and orders|length >= 10 %}
+    <div class="pagination">
+        <button class="page-button" id="prev-page" {% if page == 1 %}disabled{% endblock %}>
+            <i class="fas fa-chevron-left"></i> Previous
+        </button>
+        <span class="page-info">Page {{ page }} of {{ total_pages }}</span>
+        <button class="page-button" id="next-page" {% if page == total_pages %}disabled{% endblock %}>
+            Next <i class="fas fa-chevron-right"></i>
+        </button>
+    </div>
+    {% endblock %}
+</div>
+
+<script>
+    // Toggle filter panel
+    document.getElementById('toggle-filters').addEventListener('click', function() {
+        const filterPanel = document.getElementById('filter-panel');
+        if (filterPanel.style.display === 'none') {
+            filterPanel.style.display = 'block';
+        } else {
+            filterPanel.style.display = 'none';
+        }
+    });
+    
+    // Clear filters
+    document.getElementById('clear-filters').addEventListener('click', function() {
+        document.getElementById('filter-form').reset();
+    });
+</script>
+{% endblock %}
