@@ -154,6 +154,37 @@ def create_order():
     restaurants = Restaurant.query.all()
     return render_template('create_order.html', restaurants=restaurants)
 
+@app.route('/find_orders/<int:order_id>', methods=['GET', 'POST'])
+def find_orders(order_id):
+    if 'user_id' not in session:
+        flash('Please login to join an order')
+        return redirect(url_for('login'))
+
+    order = GroupOrder.query.get_or_404(order_id)
+
+    # Check if order is still open
+    if order.status != 'open':
+        flash('This order is no longer open for joining')
+        return redirect(url_for('order_details', order_id=order_id))
+
+    # Check if user is already a participant
+    existing = OrderParticipation.query.filter_by(
+        user_id=session['user_id'], 
+        group_order_id=order_id
+    ).first()
+
+    if existing:
+        flash('You are already part of this order')
+        return redirect(url_for('order_details', order_id=order_id))
+
+    return render_template('find_orders.html', order=order)
+
+@app.route('/find_orders')
+def list_orders():
+    orders = GroupOrder.query.filter_by(status='open').all()
+    return render_template('list_orders.html', orders=orders)
+
+
 @app.route('/order/<int:order_id>')
 def order_details(order_id):
     order = GroupOrder.query.get_or_404(order_id)
