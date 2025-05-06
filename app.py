@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
 from models import *
 from flask import jsonify
@@ -84,8 +84,6 @@ def match_user():
     ]
     return jsonify(result)
 
-from datetime import datetime, timedelta
-
 @app.route('/create_order', methods=['GET', 'POST'])
 def create_order():
     if 'user_id' not in session:
@@ -135,6 +133,30 @@ def find_orders():
     return render_template('find_orders.html', orders=orders)
 
 
+
+@app.route('/profile', methods=['GET', 'POST'])
+def profile():
+    if 'user_id' not in session:
+        flash('Please login to view your profile')
+        return redirect(url_for('login'))
+
+    user = User.query.get(session['user_id'])
+
+    if request.method == 'POST':
+        user.name = request.form.get('name')
+        user.phone = request.form.get('phone')
+        user.bio = request.form.get('bio')
+        user.price_range = request.form.get('price_range')
+        user.payment_method = request.form.get('payment_method')
+        user.frequent_restaurants = request.form.get('frequent_restaurants')
+        user.meal_preferences = ",".join(request.form.getlist('meal_preferences'))
+        db.session.commit()
+        flash('Profile updated successfully!')
+
+    # Dummy placeholders — replace with real query if needed
+    cuisines = []
+    dietary_restrictions = []
+    return render_template('profiles.html', user=user, cuisines=cuisines, dietary_restrictions=dietary_restrictions)
 
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
