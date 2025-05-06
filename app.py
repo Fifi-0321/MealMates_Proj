@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from datetime import datetime
 import os
-from models import db, User, Restaurant, GroupOrder, OrderParticipation, MenuItem, OrderItem
+from models import *
 from flask import jsonify
 import requests
 
@@ -65,6 +65,25 @@ def logout():
     flash('You have been logged out')
     return redirect(url_for('home'))
 
+@app.route('/match', methods=['GET'])
+def match_user():
+    school_id = request.args.get('school_id')
+    if not school_id:
+        return jsonify({'error': 'school_id required'}), 400
+
+    matches = UserPreference.get_top_matches(school_id, top_k=5)
+    result = [
+        {
+            'school_id': u.school_id,
+            'similarity': round(score, 3),
+            'location': u.location,
+            'eat_time': u.eat_time,
+            'dietary_restrictions': u.dietary_restrictions
+        }
+        for u, score in matches
+    ]
+    return jsonify(result)
+
 @app.route('/create_order', methods=['GET', 'POST'])
 def create_order():
     if 'user_id' not in session:
@@ -126,6 +145,30 @@ def find_orders(order_id):
 def list_orders():
     orders = GroupOrder.query.filter_by(status='open').all()
     return render_template('list_orders.html', orders=orders)
+
+@app.route('/profile', methods=['GET', 'POST'])
+def profile():
+    if 'user_id' not in session:
+        flash('Please login to view your profile')
+        return redirect(url_for('login'))
+
+    user = User.query.get(session['user_id'])
+
+    if request.method == 'POST':
+        user.name = request.form.get('name')
+        user.phone = request.form.get('phone')
+        user.bio = request.form.get('bio')
+        user.price_range = request.form.get('price_range')
+        user.payment_method = request.form.get('payment_method')
+        user.frequent_restaurants = request.form.get('frequent_restaurants')
+        user.meal_preferences = ",".join(request.form.getlist('meal_preferences'))
+        db.session.commit()
+        flash('Profile updated successfully!')
+
+    # Dummy placeholders — replace with real query if needed
+    cuisines = []
+    dietary_restrictions = []
+    return render_template('profiles.html', user=user, cuisines=cuisines, dietary_restrictions=dietary_restrictions)
 
 @app.route('/api/restaurants_by_zip/<zipcode>')
 def restaurants_by_zip(zipcode):
@@ -233,6 +276,7 @@ def finalize_order(order_id):
     
     flash('Order has been finalized!')
     return redirect(url_for('order_details', order_id=order_id))
+
 
 if __name__ == '__main__':
     with app.app_context():

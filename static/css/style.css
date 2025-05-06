@@ -601,3 +601,29 @@ footer {
     padding: 8px 15px;
     font-size: 14px;
 }
+
+.restriction_options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.restriction_checkbox {
+    display: inline-flex;
+    align-items: center;
+    background: #f8f9fa;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.restriction_checkbox:hover {
+    background: #eee6ff;
+}
+
+.restriction_checkbox input[type="checkbox"],
+.restriction_checkbox input[type="text"] {
+    margin-right: 5px;
+}
