@@ -9,6 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from sklearn.metrics.pairwise import cosine_similarity
+import numpy as np
 
 db = SQLAlchemy()
 
@@ -53,10 +54,12 @@ class UserPreference(db.Model):
     eat_time = db.Column(db.String(100))
     delivery_freq = db.Column(db.String(50))
     dietary_restrictions = db.Column(db.String(100))
-    cuisine_asian = db.Column(db.Integer)
-    cuisine_italian = db.Column(db.Integer)
-    cuisine_mexican = db.Column(db.Integer)
-    cuisine_middle_eastern = db.Column(db.Integer)
+    cuisine_asian = db.Column(db.Integer, nullable=True)
+    cuisine_italian = db.Column(db.Integer, nullable=True)
+    cuisine_mexican = db.Column(db.Integer, nullable=True)
+    cuisine_middle_eastern = db.Column(db.Integer, nullable=True)
+    cuisine_american=db.Column(db.Integer, nullable=True)
+    cuisine_fastcasual=db.Column(db.Integer, nullable=True)
     spice_level = db.Column(db.String(20))
     budget_level = db.Column(db.String(20))
     active = db.Column(db.Boolean, default=True)
@@ -67,6 +70,8 @@ class UserPreference(db.Model):
             self.cuisine_italian or 0,
             self.cuisine_mexican or 0,
             self.cuisine_middle_eastern or 0,
+            self.cuisine_american or 0,
+            self.cuisine_fastcasual or 0,
             int(self.spice_level or 0),
             int(self.budget_level or 0)
         ])
@@ -100,6 +105,10 @@ class Restaurant(db.Model):
     name = db.Column(db.String(100), nullable=False)
     address = db.Column(db.String(200))
     cuisine_type = db.Column(db.String(50))
+    latitude = db.Column(db.String(50))
+    longitude = db.Column(db.String(50))
+    score = db.Column(db.Integer)
+    grade = db.Column(db.String(10))
     menu_items = db.relationship('MenuItem', backref='restaurant', lazy=True)
     group_orders = db.relationship('GroupOrder', backref='restaurant', lazy=True)
 
@@ -120,6 +129,8 @@ class GroupOrder(db.Model):
     order_time = db.Column(db.DateTime)
     delivery_address = db.Column(db.String(200))
     participants = db.relationship('OrderParticipation', backref='group_order', lazy=True)
+    deadline = db.Column(db.DateTime)
+    payment_methods = db.Column(db.String(100))  # comma-separated
     
 class OrderParticipation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -144,3 +155,11 @@ def init_db():
 if __name__ == '__main__':
     init_db()
     print('DB pushed')
+
+#run the following to update db manually
+# if __name__ == '__main__':
+#     with app.app_context():
+#         db.drop_all()
+#         db.create_all()
+#     app.run(debug=True)
+

@@ -1,7 +1,12 @@
-from flask import Flask, jsonify, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session
 from datetime import datetime
 import os
-from models import db, User, UserPreference, Restaurant, GroupOrder, OrderParticipation, MenuItem, OrderItem
+from models import *
+from flask import jsonify
+import requests
+import pandas as pd
+import folium
+from folium.plugins import MarkerCluster
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24)
@@ -82,72 +87,141 @@ def match_user():
     ]
     return jsonify(result)
 
+from datetime import datetime, timedelta
+
 @app.route('/create_order', methods=['GET', 'POST'])
 def create_order():
     if 'user_id' not in session:
         flash('Please login to create an order')
         return redirect(url_for('login'))
-    
+
     if request.method == 'POST':
         restaurant_id = request.form['restaurant_id']
         delivery_address = request.form['delivery_address']
         order_time = datetime.strptime(request.form['order_time'], '%Y-%m-%dT%H:%M')
-        
+        duration_minutes = int(request.form['duration'])
+        deadline = order_time + timedelta(minutes=duration_minutes)
+
+        payment_methods = request.form.getlist('payment_methods')
+        payment_methods_str = ','.join(payment_methods)
+
         new_order = GroupOrder(
             creator_id=session['user_id'],
             restaurant_id=restaurant_id,
             delivery_address=delivery_address,
-            order_time=order_time
+            order_time=order_time,
+            deadline=deadline,
+            payment_methods=payment_methods_str
         )
-        
+
         db.session.add(new_order)
         db.session.commit()
-        
-        # Creator also joins as participant automatically
+
         participation = OrderParticipation(user_id=session['user_id'], group_order_id=new_order.id)
         db.session.add(participation)
         db.session.commit()
-        
+
         flash('Group order created successfully!')
         return redirect(url_for('order_details', order_id=new_order.id))
     
     restaurants = Restaurant.query.all()
+    df_rest = pd.DataFrame([{
+    "name": r.name,
+    "latitude": float(r.latitude) if r.latitude else None,
+    "longitude": float(r.longitude) if r.longitude else None,
+    "address": r.address,
+    "rating": getattr(r, "rating", None)  # use score if that's your rating
+    } for r in restaurants])
+    # print(df_rest.columns)
+    # print("Columns:", df_rest.columns)
+    # print("First 5 rows:\n", df_rest.head())
+    # print("Null values:\n", df_rest.isnull().sum())
+
+    m = folium.Map(location=[40.73, -73.99], zoom_start=12)
+    cluster = MarkerCluster().add_to(m)
+    for _, r in df_rest.dropna(subset=['latitude','longitude']).iterrows():
+        if r.latitude and r.longitude:
+            folium.Marker(
+                [float(r.latitude), float(r.longitude)],
+                popup=folium.Popup(f'''
+                <b>{r.name}</b><br>{r.address}<br>
+                <button onclick="window.parent.setRestaurant('{r.name}')">Select This</button>
+                ''', max_width=300)
+            ).add_to(cluster)
+
+    map_path = 'static/create_order_map.html'
+    m.save(map_path)
+
+    return render_template('create_order.html', map_file='create_order_map.html')
+
+
+
+    restaurants = Restaurant.query.all()
     return render_template('create_order.html', restaurants=restaurants)
 
-@app.route('/find_orders/<int:order_id>', methods=['GET', 'POST'])
-def find_orders(order_id):
-    if 'user_id' not in session:
-        flash('Please login to join an order')
-        return redirect(url_for('login'))
-
-    order = GroupOrder.query.get_or_404(order_id)
-
-    # Check if order is still open
-    if order.status != 'open':
-        flash('This order is no longer open for joining')
-        return redirect(url_for('order_details', order_id=order_id))
-
-    # Check if user is already a participant
-    existing = OrderParticipation.query.filter_by(
-        user_id=session['user_id'], 
-        group_order_id=order_id
-    ).first()
-
-    if existing:
-        flash('You are already part of this order')
-        return redirect(url_for('order_details', order_id=order_id))
-
-    return render_template('find_orders.html', order=order)
 
 @app.route('/find_orders')
-def list_orders():
-    orders = GroupOrder.query.filter_by(status='open').all()
-    return render_template('list_orders.html', orders=orders)
+def find_orders():
+    if 'user_id' not in session:
+        flash('Please login to view group orders')
+        return redirect(url_for('login'))
 
+    orders = GroupOrder.query.filter_by(status='open').order_by(GroupOrder.created_at.desc()).all()
+    return render_template('find_orders.html', orders=orders)
+
+
+
+@app.route('/profile', methods=['GET', 'POST'])
+def profile():
+    if 'user_id' not in session:
+        flash('Please login to view your profile')
+        return redirect(url_for('login'))
+
+    user = User.query.get(session['user_id'])
+
+    if request.method == 'POST':
+        user.name = request.form.get('name')
+        user.phone = request.form.get('phone')
+        user.bio = request.form.get('bio')
+        user.price_range = request.form.get('price_range')
+        user.payment_method = request.form.get('payment_method')
+        user.frequent_restaurants = request.form.get('frequent_restaurants')
+        user.meal_preferences = ",".join(request.form.getlist('meal_preferences'))
+        db.session.commit()
+        flash('Profile updated successfully!')
+
+    # Dummy placeholders — replace with real query if needed
+    cuisines = []
+    dietary_restrictions = []
+    return render_template('profiles.html', user=user, cuisines=cuisines, dietary_restrictions=dietary_restrictions)
+
+@app.route('/api/restaurants_by_zip/<zipcode>')
+def restaurants_by_zip(zipcode):
+    # Replace with a better geocoding API if available
+    resp = requests.get(f'https://nominatim.openstreetmap.org/search?postalcode={zipcode}&country=USA&format=json')
+    if not resp.json():
+        return jsonify({'restaurants': [], 'center': {'lat': 0, 'lon': 0}})
+    
+    lat = float(resp.json()[0]['lat'])
+    lon = float(resp.json()[0]['lon'])
+
+    # Sample simple radius search (customize with real distance filter)
+    nearby = Restaurant.query.all()
+    results = []
+    for r in nearby:
+        results.append({
+            'id': r.id,
+            'name': r.name,
+            'address': r.address,
+            'lat': 40.72,  # TODO: store lat/lon in DB
+            'lon': -73.99
+        })
+
+    return jsonify({'restaurants': results, 'center': {'lat': lat, 'lon': lon}})
 
 @app.route('/order/<int:order_id>')
 def order_details(order_id):
-    order = GroupOrder.query.get_or_404(order_id)
+    order = GroupOrder.query.options(db.joinedload(GroupOrder.restaurant)).get_or_404(order_id)
     menu_items = MenuItem.query.filter_by(restaurant_id=order.restaurant_id).all()
     return render_template('order_details.html', order=order, menu_items=menu_items)
 
@@ -158,34 +232,40 @@ def join_order(order_id):
         return redirect(url_for('login'))
     
     order = GroupOrder.query.get_or_404(order_id)
-    
-    # Check if order is still open
+
+    # Prevent joining if closed
     if order.status != 'open':
-        flash('This order is no longer open for joining')
+        flash('This order is closed')
         return redirect(url_for('order_details', order_id=order_id))
-    
-    # Check if user is already a participant
+
+    # Prevent duplicate joins
     existing = OrderParticipation.query.filter_by(
-        user_id=session['user_id'], 
+        user_id=session['user_id'],
         group_order_id=order_id
     ).first()
-    
+
     if existing:
-        flash('You are already part of this order')
+        flash('You already joined this order')
         return redirect(url_for('order_details', order_id=order_id))
-    
-    if request.method == 'POST':
+
+    try:
+        print("Trying to join order:", order_id, "by user:", session.get('user_id'))
+
         participation = OrderParticipation(
             user_id=session['user_id'],
             group_order_id=order_id
         )
         db.session.add(participation)
         db.session.commit()
-        
-        flash('You have joined the group order!')
+
+        flash('You joined the group order!')
         return redirect(url_for('order_details', order_id=order_id))
-    
-    return render_template('join_order.html', order=order)
+
+    except Exception as e:
+        print("Join order failed:", e)
+        flash('Something went wrong while joining the order.')
+        return redirect(url_for('order_details', order_id=order_id))
+
 
 @app.route('/add_item/<int:participation_id>', methods=['POST'])
 def add_item(participation_id):
@@ -228,7 +308,24 @@ def finalize_order(order_id):
     flash('Order has been finalized!')
     return redirect(url_for('order_details', order_id=order_id))
 
+@app.route('/debug_DB_count')
+def debug_restaurant_count():
+    from models import Restaurant
+    count1 = Restaurant.query.count()
+    return f"Total restaurants in DB: {count1}"
+def debug_user_count():
+    from models import UserPreference
+    count2 = UserPreference.query.count()
+    return f"Total restaurants in DB: {count2}"
+
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
     app.run(debug=True)
+
+# if __name__ == '__main__':
+#     with app.app_context():
+#         db.drop_all()     # ⛔ This will delete all data!
+#         db.create_all()   # ✅ Recreates tables with updated columns
+#     app.run(debug=True)
