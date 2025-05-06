@@ -92,6 +92,8 @@ class GroupOrder(db.Model):
     order_time = db.Column(db.DateTime)
     delivery_address = db.Column(db.String(200))
     participants = db.relationship('OrderParticipation', backref='group_order', lazy=True)
+    deadline = db.Column(db.DateTime)
+    payment_methods = db.Column(db.String(100))  # comma-separated
     
 class OrderParticipation(db.Model):
     id = db.Column(db.Integer, primary_key=True)

@@ -27,19 +27,6 @@
         
         <div class="col-lg-8">
             <div class="card">
-                <div class="card-header">
-                    <ul class="nav nav-tabs card-header-tabs" id="profileTabs" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab">Profile</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="preferences-tab" data-bs-toggle="tab" data-bs-target="#preferences" type="button" role="tab">Preferences</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="dietary-tab" data-bs-toggle="tab" data-bs-target="#dietary" type="button" role="tab">Dietary Info</button>
-                        </li>
-                    </ul>
-                </div>
                 
                 <div class="card-body">
                     <form method="POST" enctype="multipart/form-data">
@@ -86,7 +73,7 @@
                                         {% for cuisine in cuisines %}
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" id="cuisine_{{ cuisine.id }}" name="cuisines" value="{{ cuisine.id }}"
+                                                    <input class="form-check-input" type="checkbox" id="cuisine_{{ cuisine.id }}" name="cuisines" value="{{ user.cuisine }}"
                                                         {% if user.cuisine_preferences and cuisine in user.cuisine_preferences %}checked{% endif %}>
                                                     <label class="form-check-label" for="cuisine_{{ cuisine.id }}">{{ cuisine.name }}</label>
                                                 </div>
@@ -128,7 +115,7 @@
                                         {% for restriction in dietary_restrictions %}
                                             <div class="col-md-6 mb-2">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" id="restriction_{{ restriction.id }}" name="dietary_restrictions" value="{{ restriction.id }}"
+                                                    <input class="form-check-input" type="checkbox" id="restriction_{{ restriction.id }}" name="dietary_restrictions" value="{{ user.restriction }}"
                                                         {% if user.dietary_restrictions and restriction in user.dietary_restrictions %}checked{% endif %}>
                                                     <label class="form-check-label" for="restriction_{{ restriction.id }}">{{ restriction.name }}</label>
                                                 </div>

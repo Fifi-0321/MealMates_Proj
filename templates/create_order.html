@@ -9,59 +9,24 @@
 
     <form method="POST" action="{{ url_for('create_order') }}" class="order-form">
         <div class="form-group">
-            <label for="zipcode">Enter Zip Code</label>
-<input type="text" id="zipcode" name="zipcode" required placeholder="e.g., 10012">
-<button type="button" onclick="fetchRestaurants()">Search</button>
-
-<div id="map" style="height: 300px; margin-top: 10px;"></div>
-
-<label for="restaurant_select">Select Restaurant</label>
-<select id="restaurant_select" name="restaurant_id" required>
-    <option value="">-- Select from map --</option>
-</select>
-
-<script>
-function fetchRestaurants() {
-    const zipcode = document.getElementById('zipcode').value;
-    fetch(`/api/restaurants_by_zip/${zipcode}`)
-        .then(res => res.json())
-        .then(data => {
-            const select = document.getElementById('restaurant_select');
-            select.innerHTML = '<option value="">-- Select from map --</option>';
-            data.restaurants.forEach(r => {
-                const opt = document.createElement('option');
-                opt.value = r.id;
-                opt.textContent = `${r.name} - ${r.address}`;
-                select.appendChild(opt);
-            });
-
-            // Map rendering (e.g., Leaflet)
-            const map = L.map('map').setView([data.center.lat, data.center.lon], 15);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-            data.restaurants.forEach(r => {
-                L.marker([r.lat, r.lon]).addTo(map).bindPopup(r.name);
-            });
-        });
-}
-</script>
-
+            <label for="restaurant">Restaurant</label>
+            <input type="text" id="restaurant_id" name="restaurant_id" required placeholder="Enter restaurant name">
         </div>
 
         <div class="form-group">
             <label for="location">Pickup/Delivery Location</label>
-            <input type="text" id="location" name="location" required placeholder="Where will the food be delivered/picked up?">
+            <input type="text" id="delivery_address" name="delivery_address" required placeholder="Where will the food be delivered/picked up?">
         </div>
 
-        <div class="form-row">
-            <div class="form-group half-width">
-                <label for="order_date">Date</label>
-                <input type="date" id="order_date" name="order_date" required>
-            </div>
-            <div class="form-group half-width">
-                <label for="order_time">Time</label>
-                <input type="time" id="order_time" name="order_time" required>
-            </div>
+        <div class="form-group">
+            <label for="order_time">Order Start Time</label>
+            <input type="datetime-local" id="order_time" name="order_time" required>
         </div>
+        
+        <div class="form-group">
+            <label for="duration">How many minutes should the order remain open?</label>
+            <input type="number" id="duration" name="duration" min="1" required>
+        </div>        
 
         <div class="form-group">
             <label for="order_link">Restaurant Menu Link (Optional)</label>
@@ -85,14 +50,11 @@ function fetchRestaurants() {
         </div>
 
         <div class="form-group">
-            <label for="payment_method">Payment Collection Method</label>
-            <select id="payment_method" name="payment_method" required>
-                <option value="" disabled selected>Select a payment method</option>
-                <option value="cash">Cash on delivery</option>
-                <option value="venmo">Venmo</option>
-                <option value="paypal">PayPal</option>
-                <option value="other">Other (specify in description)</option>
-            </select>
+            <label>Payment Collection Methods</label><br>
+            <label><input type="checkbox" name="payment_methods" value="cash"> Cash</label><br>
+            <label><input type="checkbox" name="payment_methods" value="venmo"> Venmo</label><br>
+            <label><input type="checkbox" name="payment_methods" value="paypal"> PayPal</label><br>
+            <label><input type="checkbox" name="payment_methods" value="other"> Other</label>
         </div>
 
         <div class="form-group">
