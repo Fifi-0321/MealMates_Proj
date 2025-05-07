@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block title %}User Profile{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    {% if user.profile_image %}
+                        <img src="{{ url_for('static', filename='uploads/' + user.profile_image) }}" alt="Profile Image" class="rounded-circle img-fluid" style="width: 150px; height: 150px; object-fit: cover;">
+                    {% else %}
+                        <img src="{{ url_for('static', filename='images/default_profile.png') }}" alt="Default Profile" class="rounded-circle img-fluid" style="width: 150px; height: 150px; object-fit: cover;">
+                    {% endif %}
+                    <h5 class="my-3">{{ user.name or user.username }}</h5>
+                    {% if user.user_tags %}
+                        <div class="mb-3">
+                            {% for tag in user.user_tags %}
+                                <span class="badge bg-primary me-1">{{ tag.name }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-8">
+            <div class="card">
+                
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        {{ form.csrf_token() if form and form.csrf_token }}
+                        
+                        <div class="tab-content" id="profileTabContent">
+                            <!-- Profile Info -->
+                            <div class="tab-pane fade show active" id="profile" role="tabpanel">
+                                <h5 class="card-title">Profile Information</h5>
+                                <div class="mb-3">
+                                    <label for="profile_image" class="form-label">Profile Image</label>
+                                    <input type="file" class="form-control" id="profile_image" name="profile_image">
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="name" class="form-label">Full Name</label>
+                                        <input type="text" class="form-control" id="name" name="name" value="{{ user.name }}">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="username" class="form-label">Username</label>
+                                        <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}">
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="phone" class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-control" id="phone" name="phone" value="{{ user.phone or '' }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="bio" class="form-label">Bio</label>
+                                    <textarea class="form-control" id="bio" name="bio" rows="3">{{ user.bio or '' }}</textarea>
+                                </div>
+                            </div>
+
+                            <!-- Preferences -->
+                            <div class="tab-pane fade" id="preferences" role="tabpanel">
+                                <h5 class="card-title">Food Preferences</h5>
+                                <div class="mb-3">
+                                    <label class="form-label">Cuisine Preferences</label>
+                                    <div class="row">
+                                        {% for cuisine in cuisines %}
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="cuisine_{{ cuisine.id }}" name="cuisines" value="{{ user.cuisine }}"
+                                                        {% if user.cuisine_preferences and cuisine in user.cuisine_preferences %}checked{% endif %}>
+                                                    <label class="form-check-label" for="cuisine_{{ cuisine.id }}">{{ cuisine.name }}</label>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="price_range" class="form-label">Preferred Price Range</label>
+                                    <select class="form-select" id="price_range" name="price_range">
+                                        <option value="" {% if not user.price_range %}selected{% endif %}>No preference</option>
+                                        <option value="$" {% if user.price_range == '$' %}selected{% endif %}>$</option>
+                                        <option value="$$" {% if user.price_range == '$$' %}selected{% endif %}>$$</option>
+                                        <option value="$$$" {% if user.price_range == '$$$' %}selected{% endif %}>$$$</option>
+                                        <option value="$$$$" {% if user.price_range == '$$$$' %}selected{% endif %}>$$$$</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="payment_method" class="form-label">Payment Method</label>
+                                    <select class="form-select" id="payment_method" name="payment_method">
+                                        <option value="" {% if not user.payment_method %}selected{% endif %}>No preference</option>
+                                        {% for method in ['cash', 'venmo', 'paypal', 'zelle', 'credit_card'] %}
+                                            <option value="{{ method }}" {% if user.payment_method == method %}selected{% endif %}>{{ method|capitalize }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="frequent_restaurants" class="form-label">Favorite Restaurants</label>
+                                    <textarea class="form-control" id="frequent_restaurants" name="frequent_restaurants" rows="2">{{ user.frequent_restaurants or '' }}</textarea>
+                                </div>
+                            </div>
+
+                            <!-- Dietary Info -->
+                            <div class="tab-pane fade" id="dietary" role="tabpanel">
+                                <h5 class="card-title">Dietary Information</h5>
+                                <div class="mb-3">
+                                    <label class="form-label">Dietary Restrictions</label>
+                                    <div class="row">
+                                        {% for restriction in dietary_restrictions %}
+                                            <div class="col-md-6 mb-2">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="restriction_{{ restriction.id }}" name="dietary_restrictions" value="{{ user.restriction }}"
+                                                        {% if user.dietary_restrictions and restriction in user.dietary_restrictions %}checked{% endif %}>
+                                                    <label class="form-check-label" for="restriction_{{ restriction.id }}">{{ restriction.name }}</label>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="allergies" class="form-label">Allergies</label>
+                                    <textarea class="form-control" id="allergies" name="allergies" rows="2">{{ user.allergies or '' }}</textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Meal Preferences</label>
+                                    <div class="row">
+                                        {% for meal in ['breakfast', 'lunch', 'dinner'] %}
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="{{ meal }}" name="meal_preferences" value="{{ meal }}"
+                                                        {% if user.meal_preferences and meal in user.meal_preferences %}checked{% endif %}>
+                                                    <label class="form-check-label" for="{{ meal }}">{{ meal.capitalize() }}</label>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const activeTab = localStorage.getItem('profileActiveTab');
+        if (activeTab) {
+            const triggerEl = document.querySelector('#profileTabs button[data-bs-target="' + activeTab + '"]');
+            if (triggerEl) bootstrap.Tab.getOrCreateInstance(triggerEl).show();
+        }
+
+        document.querySelectorAll('#profileTabs button').forEach(tab => {
+            tab.addEventListener('shown.bs.tab', function(event) {
+                localStorage.setItem('profileActiveTab', event.target.getAttribute('data-bs-target'));
+            });
+        });
+    });
+</script>
+{% endblock %}

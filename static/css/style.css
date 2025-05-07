@@ -1,0 +1,629 @@
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap');
+
+/* Font Awesome */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
+
+/* Base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: #fcfcfc;
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Navigation */
+nav {
+    background: #a68ad6;
+    color: white;
+    padding: 15px 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+nav .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: white;
+}
+
+.logo i {
+    font-size: 22px;
+}
+
+.logo h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+.nav-links {
+    display: flex;
+    gap: 20px;
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 8px 12px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.nav-links a:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+/* Flash messages */
+.flashes {
+    max-width: 800px;
+    margin: 20px auto;
+}
+
+.flash-message {
+    padding: 15px 20px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    background-color: #eee6ff;
+    border-left: 3px solid #a68ad6;
+    color: #555;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Auth Container */
+.auth-container {
+    max-width: 700px;
+    margin: 50px auto;
+    padding: 0 20px;
+}
+
+.auth-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.auth-header {
+    background: #a68ad6;
+    color: white;
+    padding: 30px;
+    text-align: center;
+    position: relative;
+}
+
+.food-icon {
+    width: 70px;
+    height: 70px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.food-icon i {
+    font-size: 32px;
+    color: #a68ad6;
+}
+
+.auth-header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.tagline {
+    font-size: 16px;
+    opacity: 0.9;
+    font-weight: 300;
+}
+
+/* Form Styling */
+.auth-form {
+    padding: 35px;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: #555;
+}
+
+.form-group label i {
+    margin-right: 8px;
+    color: #a68ad6;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"] {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #e1e1e1;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus {
+    border-color: #a68ad6;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(166, 138, 214, 0.1);
+}
+
+.form-group input::placeholder {
+    color: #bbb;
+}
+
+/* Cuisine preferences */
+.cuisine-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.cuisine-checkbox {
+    display: inline-flex;
+    align-items: center;
+    background: #f8f9fa;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.cuisine-checkbox:hover {
+    background: #eee6ff;
+}
+
+.cuisine-checkbox input {
+    margin-right: 5px;
+}
+
+/* Remember me */
+.remember-me {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.forgot-password {
+    color: #8a6cc9;
+    text-decoration: none;
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
+}
+
+/* Button */
+.btn {
+    display: inline-block;
+    padding: 12px 20px;
+    background: #a68ad6;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    width: 100%;
+}
+
+.btn:hover {
+    background: #8a6cc9;
+    box-shadow: 0 3px 10px rgba(138, 108, 201, 0.2);
+}
+
+.btn i {
+    margin-right: 8px;
+}
+
+/* Auth links */
+.auth-links {
+    padding: 20px 30px;
+    text-align: center;
+    border-top: 1px solid #f0f0f0;
+    color: #666;
+}
+
+.auth-links a {
+    color: #8a6cc9;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.auth-links a:hover {
+    text-decoration: underline;
+}
+
+.divider {
+    width: 100px;
+    margin: 0 auto 15px;
+    opacity: 0.5;
+}
+
+/* Benefits */
+.benefits {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    background: #f9f7fc;
+    padding: 30px;
+    text-align: center;
+}
+
+.benefit-item i {
+    font-size: 22px;
+    color: #a68ad6;
+    margin-bottom: 10px;
+}
+
+.benefit-item p {
+    color: #555;
+    font-size: 14px;
+}
+
+/* Current Orders */
+.current-orders {
+    background: #f9f7fc;
+    padding: 20px 30px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.current-orders h3 {
+    font-size: 18px;
+    color: #555;
+    margin-bottom: 15px;
+    font-family: 'Playfair Display', serif;
+}
+
+.current-orders h3 i {
+    color: #a68ad6;
+    margin-right: 8px;
+}
+
+.mini-orders {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.mini-order {
+    display: flex;
+    justify-content: space-between;
+    background: white;
+    padding: 12px 15px;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+}
+
+.restaurant {
+    font-weight: 500;
+}
+
+.time {
+    color: #a68ad6;
+    font-size: 14px;
+}
+
+.login-prompt {
+    text-align: center;
+    font-size: 14px;
+    color: #777;
+    margin-top: 10px;
+}
+
+/* Responsive Styling */
+@media (max-width: 768px) {
+    .auth-header {
+        padding: 20px;
+    }
+    
+    .food-icon {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .food-icon i {
+        font-size: 28px;
+    }
+    
+    .auth-form {
+        padding: 25px;
+    }
+    
+    .benefits {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+}
+
+/* Footer */
+footer {
+    background: #3a3a3a;
+    color: #fff;
+    margin-top: 60px;
+    padding: 50px 0 20px;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px;
+    margin-bottom: 30px;
+}
+
+.footer-section h3 {
+    font-size: 18px;
+    margin-bottom: 15px;
+    color: #cebff0;
+    font-family: 'Playfair Display', serif;
+}
+
+.footer-section p {
+    color: #bbb;
+    line-height: 1.6;
+}
+
+.footer-section ul {
+    list-style: none;
+}
+
+.footer-section ul li {
+    margin-bottom: 10px;
+}
+
+.footer-section ul li a {
+    color: #bbb;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-section ul li a:hover {
+    color: #cebff0;
+}
+
+.social-icons {
+    display: flex;
+    gap: 15px;
+}
+
+.social-icons a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    color: #fff;
+    transition: all 0.3s ease;
+}
+
+.social-icons a:hover {
+    background: #a68ad6;
+    transform: translateY(-3px);
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: #888;
+    font-size: 14px;
+}
+
+/* Additional styles for the homepage */
+.hero {
+    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('/static/img/food-banner.jpg');
+    background-size: cover;
+    background-position: center;
+    color: white;
+    padding: 120px 0;
+    text-align: center;
+    margin-bottom: px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 48px;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.hero p {
+    font-size: 18px;
+    max-width: 600px;
+    margin: 0 auto 30px;
+    line-height: 1.7;
+}
+
+.cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid white;
+}
+
+.btn-outline:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.orders-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 25px;
+    margin-top: 30px;
+}
+
+.order-card {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.07);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.order-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.order-img {
+    height: 150px;
+    background-size: cover;
+    background-position: center;
+}
+
+.order-content {
+    padding: 20px;
+}
+
+.order-restaurant {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.restaurant-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+    background-size: cover;
+}
+
+.order-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+}
+
+.detail-item i {
+    margin-right: 8px;
+    color: #a68ad6;
+}
+
+.order-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 15px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.participants {
+    display: flex;
+}
+
+.participant {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #888;
+    font-size: 12px;
+    margin-left: -10px;
+    border: 2px solid white;
+}
+
+.participant:first-child {
+    margin-left: 0;
+}
+
+.btn-sm {
+    padding: 8px 15px;
+    font-size: 14px;
+}
+
+.restriction_options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.restriction_checkbox {
+    display: inline-flex;
+    align-items: center;
+    background: #f8f9fa;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.restriction_checkbox:hover {
+    background: #eee6ff;
+}
+
+.restriction_checkbox input[type="checkbox"],
+.restriction_checkbox input[type="text"] {
+    margin-right: 5px;
+}
