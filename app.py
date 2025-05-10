@@ -7,6 +7,7 @@ import requests
 import pandas as pd
 import folium
 from folium.plugins import MarkerCluster
+from ML import get_top_matches_by_school_id
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24)
@@ -68,24 +69,56 @@ def logout():
     flash('You have been logged out')
     return redirect(url_for('home'))
 
-@app.route('/match', methods=['GET'])
-def match_user():
-    school_id = request.args.get('school_id')
-    if not school_id:
-        return jsonify({'error': 'school_id required'}), 400
+@app.route('/input_preference', methods=['GET', 'POST'])
+def input_preference():
+    if 'user_id' not in session:
+        flash("Please login first.")
+        return redirect(url_for('login'))
 
-    matches = UserPreference.get_top_matches(school_id, top_k=5)
-    result = [
-        {
-            'school_id': u.school_id,
-            'similarity': round(score, 3),
-            'location': u.location,
-            'eat_time': u.eat_time,
-            'dietary_restrictions': u.dietary_restrictions
-        }
-        for u, score in matches
-    ]
-    return jsonify(result)
+    user = User.query.get(session['user_id'])
+    school_id = user.username  # Assuming school_id == username
+
+    if request.method == 'POST':
+        pref = UserPreference.query.filter_by(school_id=school_id).first()
+        if not pref:
+            pref = UserPreference(school_id=school_id)
+
+        pref.location = request.form['location']
+        pref.eat_time = request.form['eat_time']
+        pref.spice_level = request.form.get('spice_level', 0)
+        pref.budget_level = request.form.get('budget_level', 0)
+        pref.cuisine_asian = request.form.get('cuisine_asian', 0)
+        pref.cuisine_italian = request.form.get('cuisine_italian', 0)
+        pref.cuisine_mexican = request.form.get('cuisine_mexican', 0)
+        pref.cuisine_middle_eastern = request.form.get('cuisine_middle_eastern', 0)
+        pref.active = True
+
+        db.session.add(pref)
+        db.session.commit()
+        flash("Preferences saved!")
+
+        return redirect(url_for('home'))
+
+    return render_template('match.html')
+
+
+@app.route('/match_results')
+def match_results():
+    if 'user_id' not in session:
+        flash('Please login to view matches')
+        return redirect(url_for('login'))
+
+    user = User.query.get(session['user_id'])
+    preference = UserPreference.query.filter_by(school_id=user.username).first()  # Assuming username == school_id
+
+    if not preference:
+        flash('No preference data found for this user')
+        return redirect(url_for('profile'))
+
+    matches = get_top_matches_by_school_id(preference.school_id)
+
+    return render_template('match_results.html', matches=matches)
+
 
 from datetime import datetime, timedelta
 
@@ -316,7 +349,7 @@ def debug_restaurant_count():
 def debug_user_count():
     from models import UserPreference
     count2 = UserPreference.query.count()
-    return f"Total restaurants in DB: {count2}"
+    return f"Total users in DB: {count2}"
 
 
 if __name__ == '__main__':

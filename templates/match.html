@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Enter Your Preferences</h2>
+<form method="POST" action="{{ url_for('input_preference') }}">
+
+    <label>Location:
+        <input type="text" name="location" required>
+    </label><br><br>
+
+    <label>Eating Time:
+        <select name="eat_time" required>
+            <option value="Breakfast (7-10 AM)">Breakfast</option>
+            <option value="Lunch (12-2 PM)">Lunch</option>
+            <option value="Dinner (6-9 PM)">Dinner</option>
+            <option value="Late Night (9 PM-12 AM)">Late Night</option>
+        </select>
+    </label><br><br>
+
+    <label>Spice Level:
+        <select name="spice_level">
+            <option value="0">None</option>
+            <option value="1">Mild</option>
+            <option value="2">Medium</option>
+            <option value="3">Hot</option>
+        </select>
+    </label><br><br>
+
+    <label>Budget Level:
+        <select name="budget_level">
+            <option value="0">< $10</option>
+            <option value="1">$10–$20</option>
+            <option value="2">$20–$30</option>
+            <option value="3">> $30</option>
+        </select>
+    </label><br><br>
+
+    <h3>Cuisine Preferences (Rank 0–3)</h3>
+    <label>Asian:
+        <select name="cuisine_asian">
+            <option value="0">Not interested</option>
+            <option value="1">Somewhat</option>
+            <option value="2">Like it</option>
+            <option value="3">Love it</option>
+        </select>
+    </label><br>
+
+    <label>Italian:
+        <select name="cuisine_italian">
+            <option value="0">Not interested</option>
+            <option value="1">Somewhat</option>
+            <option value="2">Like it</option>
+            <option value="3">Love it</option>
+        </select>
+    </label><br>
+
+    <label>Mexican:
+        <select name="cuisine_mexican">
+            <option value="0">Not interested</option>
+            <option value="1">Somewhat</option>
+            <option value="2">Like it</option>
+            <option value="3">Love it</option>
+        </select>
+    </label><br>
+
+    <label>Middle Eastern:
+        <select name="cuisine_middle_eastern">
+            <option value="0">Not interested</option>
+            <option value="1">Somewhat</option>
+            <option value="2">Like it</option>
+            <option value="3">Love it</option>
+        </select>
+    </label><br><br>
+
+    <button type="submit">Save Preferences</button>
+</form>
+{% endblock %}
+

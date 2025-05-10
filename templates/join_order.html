@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Join Group Order{% endblock %}
+
+{% block content %}
+<div class="join-order-container">
+    <h2>Join Group Order at {{ order.restaurant.name }}</h2>
+    <p><strong>Delivery Address:</strong> {{ order.delivery_address }}</p>
+    <p><strong>Order Time:</strong> {{ order.order_time.strftime('%Y-%m-%d %H:%M') }}</p>
+    <p><strong>Closes At:</strong> {{ order.deadline.strftime('%Y-%m-%d %H:%M') }}</p>
+
+    <form method="POST">
+        <button type="submit" class="btn btn-primary">Join This Order</button>
+        <a href="{{ url_for('order_details', order_id=order.id) }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

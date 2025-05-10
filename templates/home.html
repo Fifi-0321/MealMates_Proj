@@ -19,4 +19,25 @@
     {% else %}
         <p>No active orders at the moment. Why not <a href="{{ url_for('create_order') }}">create one</a>?</p>
     {% endif %}
+    
+    <div style="margin-bottom: 20px;">
+        <a href="{{ url_for('input_preference') }}" class="btn btn-secondary">🎯 Enter Your Preferences</a>
+    </div>
+
+    <h2>Your Top MealMate Matches</h2>
+    {% if matches %}
+        <ul class="match-list">
+            {% for match, score in matches %}
+                <li>
+                    <strong>{{ match.school_id }}</strong> –
+                    Similarity: {{ '%.2f'|format(score) }}<br>
+                    Location: {{ match.location }}<br>
+                    Eats at: {{ match.eat_time }}<br>
+                    Restrictions: {{ match.dietary_restrictions }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No matches found. Click above to add your preferences!</p>
+    {% endif %}
 {% endblock %}

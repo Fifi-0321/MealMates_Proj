@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Order Details{% endblock %}
+
+{% block content %}
+<div class="order-details-container">
+    <h2 class="page-title">Group Order Details</h2>
+
+    <div class="order-summary">
+        <p><strong>Restaurant:</strong> {{ order.restaurant.name }}</p>
+        <p><strong>Delivery Address:</strong> {{ order.delivery_address }}</p>
+        <p><strong>Order Start Time:</strong> {{ order.order_time.strftime('%Y-%m-%d %H:%M') }}</p>
+        {% if order.deadline %}
+        <p><strong>Order Closes At:</strong> {{ order.deadline.strftime('%Y-%m-%d %H:%M') }}</p>
+        {% endif %}
+        {% if order.payment_methods %}
+        <p><strong>Payment Methods:</strong> {{ order.payment_methods }}</p>
+        {% endif %}
+        <p><strong>Created By:</strong> {{ order.creator.username }}</p>
+    </div>
+
+    <hr>
+
+    <h3>Menu Items</h3>
+    {% if menu_items %}
+        <ul class="menu-list">
+            {% for item in menu_items %}
+                <li>{{ item.name }} - ${{ "%.2f"|format(item.price) }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No menu items found for this restaurant.</p>
+    {% endif %}
+
+    <div class="button-group">
+        <a href="{{ url_for('join_order', order_id=order.id) }}" class="primary-button">
+            <i class="fas fa-sign-in-alt"></i> Join This Order
+        </a>
+        <p></p>
+        <a href="{{ url_for('find_orders') }}" class="secondary-button">
+            <i class="fas fa-sign-in-alt"></i> Back to Orders
+        </a>
+    </div>
+</div>
+{% endblock %}
