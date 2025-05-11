@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block title %}Create Group Order - MealMates{% endblock %}
+
+{% block content %}
+<div class="create-order-container">
+    <h2 class="page-title">Create a Group Order</h2>
+    <p class="section-description">Set up a meal order and invite others to join you!</p>
+
+    <form method="POST" action="{{ url_for('create_order') }}" class="order-form">
+    
+        <hr>
+            <h4>Explore Restaurants Nearby</h4>
+            <div class="form-group">
+                <label for="zipcode">ZIP Code</label>
+                <input type="text" id="zipcode" placeholder="e.g. 10003">
+                <label for="cuisine">Cuisine Type</label>
+                <input type="text" id="cuisine" placeholder="e.g. thai, asian">
+                <button type="button" onclick="getNearbyRestaurants()">Find Nearby Restaurants</button>
+                <div class="form-group">
+                   
+                </div>
+
+                <div id="recommendation_results" style="margin-top: 20px;"></div>
+            </div>
+
+        <hr>
+        <div class="form-group">
+            <label for="restaurant" style="margin-bottom: 0;">Restaurant</label>
+            <input
+                type="text"
+                id="restaurant_id"
+                name="restaurant_id"
+                required
+                placeholder="Select Restaurant From Map"
+                style="margin-bottom: 0; display: block;"
+            >
+    
+        </div>
+
+        <div class="map-container" style="margin-top: 10px;">
+            <h3><i class="fas fa-map-marker-alt"></i> Explore Restaurants Nearby</h3>
+            <iframe src="{{ url_for('static', filename=map_file) }}" width="100%" height="500px" style="border:none;"></iframe>
+        </div>
+
+        <div class="form-group">
+            <label for="location">Pickup/Delivery Location</label>
+            <input type="text" id="delivery_address" name="delivery_address" required placeholder="Where will the food be delivered/picked up?">
+        </div>
+
+        <div class="form-group">
+            <label for="order_time">Order Start Time</label>
+            <input type="datetime-local" id="order_time" name="order_time" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="duration">How many minutes should the order remain open?</label>
+            <input type="number" id="duration" name="duration" min="1" required>
+        </div>        
+
+        <div class="form-group">
+            <label for="order_link">Restaurant Menu Link (Optional)</label>
+            <input type="url" id="order_link" name="order_link" placeholder="https://restaurant-website.com/menu">
+        </div>
+
+        <div class="form-row">
+            <div class="form-group half-width">
+                <label for="min_people">Minimum People</label>
+                <input type="number" id="min_people" name="min_people" min="2" value="2">
+            </div>
+            <div class="form-group half-width">
+                <label for="max_people">Maximum People</label>
+                <input type="number" id="max_people" name="max_people" min="2" value="5">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" name="description" rows="4" placeholder="Share any details about your order plan, preferences, or requirements"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Payment Collection Methods</label><br>
+            <label><input type="checkbox" name="payment_methods" value="cash"> Cash</label><br>
+            <label><input type="checkbox" name="payment_methods" value="venmo"> Venmo</label><br>
+            <label><input type="checkbox" name="payment_methods" value="paypal"> PayPal</label><br>
+            <label><input type="checkbox" name="payment_methods" value="other"> Other</label>
+        </div>
+
+        <div class="form-group">
+            <label class="checkbox-container">
+                <input type="checkbox" id="is_public" name="is_public" checked>
+                <span class="checkmark"></span>
+                Make this order public (visible to all MealMates users)
+            </label>
+        </div>
+
+        <div class="button-group">
+            <button type="submit" class="primary-button">Create Group</button>
+            <a href="{{ url_for('home') }}" class="secondary-button">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<div class="info-box">
+    <h3><i class="fas fa-info-circle"></i> How Group Orders Work</h3>
+    <ul>
+        <li>Create a group order and specify details</li>
+        <li>Other users can join your group until it's full</li>
+        <li>Coordinate with group members through the chat</li>
+        <li>Place the order and collect payments</li>
+        <li>Enjoy your meal together!</li>
+    </ul>
+</div>
+
+<script>
+    function setRestaurant(name) {
+        document.getElementById('restaurant_id').value = name;
+    }
+    </script>
+
+<script>
+  async function getNearbyRestaurants() {
+    const zip = document.getElementById("zipcode").value.trim();
+    const cuisine = document.getElementById("cuisine").value.trim().toLowerCase();
+    const container = document.getElementById("recommendation_results");
+
+    console.log("📍 getNearbyRestaurants triggered", { zip, cuisine });
+
+    if (!zip) {
+      alert("Please enter a ZIP code.");
+      return;
+    }
+
+    const res = await fetch(`/api/restaurants_by_zip/${zip}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ cuisine: cuisine })
+    });
+
+    const data = await res.json();
+    console.log("✅ Response:", data);
+
+    container.innerHTML = "";
+
+    if (!data.length) {
+      container.innerHTML = "<p>No matching restaurants found.</p>";
+      return;
+    }
+
+    const list = document.createElement("ul");
+    data.forEach(r => {
+      const item = document.createElement("li");
+      item.innerHTML = `<strong>${r.name}</strong><br>${r.address}<br>
+        Cuisine: ${r.cuisine_type}
+        <button onclick="document.getElementById('restaurant_id').value='${r.id}'">Use This</button>`;
+      list.appendChild(item);
+    });
+
+    container.appendChild(list);
+  }
+</script>
+
+
+{% endblock %}
+
