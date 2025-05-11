@@ -65,15 +65,21 @@ class UserPreference(db.Model):
     active = db.Column(db.Boolean, default=True)
 
     def to_vector(self):
+        def safe_int(val):
+            try:
+                return int(val)
+            except:
+                return 0
+
         return np.array([
-            self.cuisine_asian or 0,
-            self.cuisine_italian or 0,
-            self.cuisine_mexican or 0,
-            self.cuisine_middle_eastern or 0,
-            self.cuisine_american or 0,
-            self.cuisine_fastcasual or 0,
-            int(self.spice_level or 0),
-            int(self.budget_level or 0)
+            safe_int(self.cuisine_asian),
+            safe_int(self.cuisine_italian),
+            safe_int(self.cuisine_mexican),
+            safe_int(self.cuisine_middle_eastern),
+            safe_int(self.cuisine_american),
+            safe_int(self.cuisine_fastcasual),
+            safe_int(self.spice_level),
+            safe_int(self.budget_level)
         ])
 
     @staticmethod
@@ -98,6 +104,13 @@ class UserPreference(db.Model):
         sim_scores = cosine_similarity(target_vec, np.array(user_vecs))[0]
         top_indices = np.argsort(sim_scores)[::-1][:top_k]
         return [(user_refs[i], sim_scores[i]) for i in top_indices]
+
+class UserMatch(db.Model): #so unless when users fill out new preference or the matched user list won't be upadted auto
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    matched_school_id = db.Column(db.String(20))
+    similarity = db.Column(db.Float)
+
 
 
 class Restaurant(db.Model):

@@ -20,7 +20,13 @@ db.init_app(app)
 @app.route('/')
 def home():
     active_orders = GroupOrder.query.filter_by(status='open').order_by(GroupOrder.created_at.desc()).limit(10).all()
-    return render_template('home.html', active_orders=active_orders)
+
+    matches = []
+    if 'user_id' in session:
+        user = User.query.get(session['user_id'])
+        stored = UserMatch.query.filter_by(user_id=user.id).all()
+        matches = [(UserPreference.query.filter_by(school_id=m.matched_school_id).first(), m.similarity) for m in stored]
+    return render_template('home.html', active_orders=active_orders, matches=matches)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -85,18 +91,26 @@ def input_preference():
 
         pref.location = request.form['location']
         pref.eat_time = request.form['eat_time']
-        pref.spice_level = request.form.get('spice_level', 0)
-        pref.budget_level = request.form.get('budget_level', 0)
-        pref.cuisine_asian = request.form.get('cuisine_asian', 0)
-        pref.cuisine_italian = request.form.get('cuisine_italian', 0)
-        pref.cuisine_mexican = request.form.get('cuisine_mexican', 0)
-        pref.cuisine_middle_eastern = request.form.get('cuisine_middle_eastern', 0)
+        pref.spice_level = int(request.form.get('spice_level', 0))
+        pref.budget_level = int(request.form.get('budget_level', 0))
+        pref.cuisine_asian = int(request.form.get('cuisine_asian', 0))
+        pref.cuisine_italian = int(request.form.get('cuisine_italian', 0))
+        pref.cuisine_mexican = int(request.form.get('cuisine_mexican', 0))
+        pref.cuisine_middle_eastern = int(request.form.get('cuisine_middle_eastern', 0))
         pref.active = True
 
         db.session.add(pref)
-        db.session.commit()
-        flash("Preferences saved!")
 
+        UserMatch.query.filter_by(user_id=user.id).delete()
+
+        # Compute new matches and saved unless the user inout anbother new in the match.html
+        new_matches = get_top_matches_by_school_id(school_id)
+        for match_user, score in new_matches:
+            match = UserMatch(user_id=user.id, matched_school_id=match_user.school_id, similarity=score)
+            db.session.add(match)
+
+        db.session.commit()
+        flash("Preferences saved and matches updated!")
         return redirect(url_for('home'))
 
     return render_template('match.html')
