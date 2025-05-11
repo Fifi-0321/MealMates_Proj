@@ -10,6 +10,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
+import requests
 
 db = SQLAlchemy()
 
@@ -30,6 +31,36 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24)
 app.config['SQLALCHEMY_DATABASE_URI'] = connection_string
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+
+#before dealing with data
+def geocode_address(address):
+    """Return (latitude, longitude) from a full address using Nominatim."""
+    url = "https://nominatim.openstreetmap.org/search"
+    params = {
+        'q': address,
+        'format': 'json',
+        'limit': 1
+    }
+    try:
+        response = requests.get(url, params=params, headers={"User-Agent": "MealMatesBot"})
+        data = response.json()
+        if data:
+            lat = float(data[0]['lat'])
+            lon = float(data[0]['lon'])
+            return (lat, lon)
+    except Exception as e:
+        print("Geocoding error:", e)
+    return None
+
+import re
+
+def is_valid_address(address):
+    """Returns True if address includes a street name and a 5-digit ZIP code."""
+    # Checks: at least 2 words + a 5-digit number
+    has_street = bool(re.search(r'[A-Za-z]+\s+\d+|\d+\s+[A-Za-z]+', address))
+    has_zip = bool(re.search(r'\b\d{5}\b', address))
+    return has_street and has_zip
+
 
 # === MODELS ===
 class User(db.Model):

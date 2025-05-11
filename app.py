@@ -98,6 +98,12 @@ def input_preference():
         pref.cuisine_mexican = int(request.form.get('cuisine_mexican', 0))
         pref.cuisine_middle_eastern = int(request.form.get('cuisine_middle_eastern', 0))
         pref.active = True
+        if not is_valid_address(pref.location):
+            flash("Please enter a complete address including ZIP code.")
+            return redirect(url_for('input_preference'))
+        coords = geocode_address(pref.location)
+        if coords:
+            pref.latitude, pref.longitude = coords
 
         db.session.add(pref)
 
@@ -215,6 +221,24 @@ def find_orders():
 
     orders = GroupOrder.query.filter_by(status='open').order_by(GroupOrder.created_at.desc()).all()
     return render_template('find_orders.html', orders=orders)
+
+@app.route('/preview_eta/<school_id>', methods=['POST'])
+def preview_eta(school_id):
+    user_pref = UserPreference.query.filter_by(school_id=school_id).first()
+    from delivery import preview_eta_for_user
+    eta = preview_eta_for_user(school_id, user_pref)
+    return jsonify({'estimated_time_min': eta})
+
+
+# @app.route('/route_with/<school_id>', methods=['POST'])
+# def route_with(school_id):
+#     user_pref = UserPreference.query.filter_by(school_id=school_id).first()
+#     if not user_pref:
+#         return jsonify({'error': 'User preference not found'}), 404
+
+#     from delivery import compute_delivery_route_with_new_user
+#     route_info = compute_delivery_route_with_new_user(school_id, user_pref)
+#     return jsonify({'route': route_info})
 
 
 

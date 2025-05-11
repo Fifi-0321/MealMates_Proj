@@ -1,28 +1,36 @@
 {% extends "base.html" %}
 
-{% block title %}Find Group Orders{% endblock %}
+{% block title %}Find Group Orders - MealMates{% endblock %}
 
 {% block content %}
 <div class="find-orders-container">
-    <h2 class="page-title">Join a Group Order</h2>
+    <h2 class="page-title">Available Group Orders</h2>
 
     {% if orders %}
-        <div class="orders-list">
+        <ul class="order-list">
             {% for order in orders %}
-                <div class="order-card">
-                    <h3>From {{ order.restaurant.name }}</h3>
-                    <p><strong>By:</strong> {{ order.creator.username }}</p>
-                    <p><strong>Delivery:</strong> {{ order.delivery_address }}</p>
-                    <p><strong>Starts:</strong> {{ order.order_time.strftime('%Y-%m-%d %H:%M') }}</p>
-                    <p><strong>Closes:</strong> {{ order.deadline.strftime('%Y-%m-%d %H:%M') if order.deadline }}</p>
-                    <p><strong>Payment:</strong> {{ order.payment_methods or "Not specified" }}</p>
-                    <p><strong>Participants:</strong> {{ order.participants|length }}</p>
-                    <a href="{{ url_for('order_details', order_id=order.id) }}" class="btn">View & Join</a>
-                </div>
+                <li class="order-item">
+                    <h3>{{ order.restaurant.name }}</h3>
+                    <p><strong>Created by:</strong> {{ order.creator.username }}</p>
+                    <p><strong>Address:</strong> {{ order.restaurant.address }}</p>
+                    <p><strong>Deadline:</strong> {{ order.deadline.strftime('%Y-%m-%d %H:%M') }}</p>
+
+                    <!-- Preview ETA Button -->
+                    <form method="POST" action="{{ url_for('preview_eta', school_id=order.creator.username) }}">
+                        <button type="submit" class="secondary-button">Check ETA to My Address</button>
+                    </form>
+
+                    <!-- Join Button -->
+                    <a href="{{ url_for('join_order', order_id=order.id) }}" class="primary-button" style="margin-top: 10px;">
+                        Join This Order
+                    </a>
+                </li>
             {% endfor %}
-        </div>
+        </ul>
     {% else %}
-        <p>No open group orders right now. <a href="{{ url_for('create_order') }}">Start one?</a></p>
+        <p>No open group orders at the moment.</p>
     {% endif %}
 </div>
 {% endblock %}
+
+
