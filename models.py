@@ -12,6 +12,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 import requests
 from geopy.distance import geodesic
+import re
 
 db = SQLAlchemy()
 
