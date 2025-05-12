@@ -12,6 +12,18 @@
             <h1>Welcome Back!</h1>
             <p class="tagline">Your meal groups are waiting for you</p>
         </div>
+
+<audio id="click-sound" src="{{ url_for('static', filename='static/sounds/mcdonalds-jingle.mp3') }}"></audio>
+<audio id="success-sound" src="{{ url_for('static', filename='static/sounds/mcdonalds-jingle.mp3') }}"></audio>
+
+<script>
+    function playClick() {
+        document.getElementById('click-sound').play();
+    }
+    function playSuccess() {
+        document.getElementById('success-sound').play();
+    }
+</script>
         
         <form method="POST" action="{{ url_for('login') }}" class="auth-form">
             <div class="form-group">

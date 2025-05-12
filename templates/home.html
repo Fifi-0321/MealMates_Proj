@@ -1,6 +1,19 @@
 {% extends "base.html" %}
 
 {% block content %}
+    {% if play_sound %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const audio = new Audio("{{ url_for('static', filename='sounds/mcdonalds-jingle.mp3') }}");
+            audio.volume = 1.0;
+            audio.play().then(() => {
+                console.log("✅ Sound played!");
+            }).catch(err => {
+                console.warn("⚠️ Autoplay blocked:", err);
+            });
+        });
+    </script>
+    {% endif %}
     <h1>Welcome to Meal Sharing App</h1>
     
     <h2>Active Group Orders</h2>

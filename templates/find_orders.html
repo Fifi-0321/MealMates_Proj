@@ -20,6 +20,18 @@
                         <button type="submit" class="secondary-button">Check ETA to My Address</button>
                     </form>
 
+                    <!-- Show Route Details Button -->
+                    <button class="secondary-button" onclick="showRouteDetails('{{ order.creator.username }}')">
+                        Show Route Steps
+                    </button>
+                    <ul id="route-{{ order.creator.username }}" class="route-result"></ul>
+
+                    <!-- Show Route Map Button -->
+                    <button class="secondary-button" onclick="showRouteMap('{{ order.creator.username }}')">
+                        Show Route on Map
+                    </button>
+                    <div id="map-link-{{ order.creator.username }}"></div>
+
                     <!-- Join Button -->
                     <a href="{{ url_for('join_order', order_id=order.id) }}" class="primary-button" style="margin-top: 10px;">
                         Join This Order
@@ -31,6 +43,46 @@
         <p>No open group orders at the moment.</p>
     {% endif %}
 </div>
+
+<script>
+function showRouteDetails(schoolId) {
+    fetch(`/route_with/${schoolId}`, { method: "POST" })
+        .then(res => res.json())
+        .then(data => {
+            console.log("Route data:", data);
+
+            const container = document.getElementById(`route-${schoolId}`);
+            container.innerHTML = "";
+            const route = data.seq || data.route;
+            if (Array.isArray(route) && route.length) {
+                route.forEach(([user, eta]) => {
+                    const li = document.createElement("li");
+                    li.innerText = `${user}: ETA ${eta} min`;
+                    container.appendChild(li);
+                });
+            } else {
+                container.innerHTML = "<li>Route info not available.</li>";
+            }
+        })
+        .catch(err => {
+            console.error("Route fetch error:", err);
+        });
+}
+
+function showRouteMap(schoolId) {
+    fetch(`/route_with/${schoolId}`, { method: "POST" })
+        .then(res => res.json())
+        .then(data => {
+            const div = document.getElementById(`map-link-${schoolId}`);
+            if (data.map_url) {
+                div.innerHTML = `<a href="${data.map_url}" target="_blank">View Route Map</a>`;
+            } else {
+                div.innerHTML = "<p>Map not available.</p>";
+            }
+        })
+        .catch(err => {
+            console.error("Map link fetch error:", err);
+        });
+}
+</script>
 {% endblock %}
-
-

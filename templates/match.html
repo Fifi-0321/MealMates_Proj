@@ -5,8 +5,12 @@
 <form method="POST" action="{{ url_for('input_preference') }}">
 
     <label>Location:
-        <input type="text" name="location" required>
+        <input type="text" name="location" required
+           placeholder="e.g., 70 Washington Square S, New York, NY 10012"
+           pattern=".*New York.*\d{5}"
+           title="Include a street address, 'New York', and a 5-digit ZIP code">
     </label><br><br>
+    <small style="color: #666;">Please enter a full address in New York including ZIP code, e.g., "..., New York, NY 10012".</small>
 
     <label>Eating Time:
         <select name="eat_time" required>

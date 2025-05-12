@@ -5,14 +5,17 @@
 {% block content %}
 <div class="create-order-container">
     <h2 class="page-title">Create a Group Order</h2>
-    <p class="section-description">Set up a meal order and invite others to join you!</p>
+    <p class="section-description">Set up a meal order and invite others to join you!</p >
 
     <form method="POST" action="{{ url_for('create_order') }}" class="order-form">
         <div class="form-group">
             <label for="restaurant">Restaurant</label>
-            <input type="text" id="restaurant_id" name="restaurant_id" required placeholder="Enter restaurant name">
+            <input type="text" id="restaurant_id" name="restaurant_id" required placeholder="Enter restaurant name or select from map">
+        </div>
+        
         <div class="map-container" style="margin-top: 30px;">
             <h3><i class="fas fa-map-marker-alt"></i> Explore Restaurants Nearby</h3>
+            <p>Click on markers to view restaurant details and cuisine type</p >
             <iframe src="{{ url_for('static', filename=map_file) }}" width="100%" height="500px" style="border:none;"></iframe>
         </div>
 
@@ -21,14 +24,11 @@
             <input type="text" id="delivery_address" name="delivery_address" required placeholder="Where will the food be delivered/picked up?">
         </div>
 
-        <div class="form-group">
-            <label for="order_time">Order Start Time</label>
-            <input type="datetime-local" id="order_time" name="order_time" required>
-        </div>
+        <!-- Removed the order_time input field as requested -->
         
         <div class="form-group">
             <label for="duration">How many minutes should the order remain open?</label>
-            <input type="number" id="duration" name="duration" min="1" required>
+            <input type="number" id="duration" name="duration" min="1" value="30" required>
         </div>        
 
         <div class="form-group">
@@ -70,7 +70,7 @@
 
         <div class="button-group">
             <button type="submit" class="primary-button">Create Group</button>
-            <a href="{{ url_for('home') }}" class="secondary-button">Cancel</a>
+            Cancel
         </div>
     </form>
 </div>
@@ -90,6 +90,12 @@
     function setRestaurant(name) {
         document.getElementById('restaurant_id').value = name;
     }
-    </script>
+    
+    // Set default duration when page loads
+    window.onload = function() {
+        // Set default duration
+        document.getElementById('duration').value = 30;
+    }
+</script>
     
 {% endblock %}
