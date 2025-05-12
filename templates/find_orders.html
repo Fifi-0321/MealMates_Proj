@@ -36,6 +36,8 @@
                     <a href="{{ url_for('join_order', order_id=order.id) }}" class="primary-button" style="margin-top: 10px;">
                         Join This Order
                     </a>
+                    <button onclick="loadRadar('{{ order.creator.username }}')">Compare My Similarity</button>
+                    <div id="radar-container-{{ order.creator.username }}" style="height:400px;"></div>
                 </li>
             {% endfor %}
         </ul>
@@ -82,6 +84,22 @@ function showRouteMap(schoolId) {
         })
         .catch(err => {
             console.error("Map link fetch error:", err);
+        });
+}
+</script>
+
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+function loadRadar(schoolId) {
+    const containerId = `radar-container-${schoolId}`;
+    fetch(`/api/similarity_radar/${schoolId}`)
+        .then(res => res.json())
+        .then(data => {
+            Plotly.newPlot(containerId, data.data, data.layout);
+        })
+        .catch(err => {
+            document.getElementById(containerId).innerText = "Failed to load similarity chart.";
+            console.error("Radar fetch error:", err);
         });
 }
 </script>

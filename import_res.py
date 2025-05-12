@@ -5,7 +5,7 @@ from sqlalchemy import text
 
 # Read restaurant data from remote MySQL
 with engine.connect() as conn:
-    df_res = pd.read_sql(text("SELECT name, address, latitude, longitude, score, grade FROM restaurants"), conn)
+    df_res = pd.read_sql(text("SELECT name, address, latitude, longitude, score FROM restaurants"), conn)
     print("Restaurants table columns:", list(df_res.columns))
     print(df_res.head())
 with app.app_context():

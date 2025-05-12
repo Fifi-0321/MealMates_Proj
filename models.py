@@ -11,6 +11,7 @@ from datetime import datetime
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 import requests
+from geopy.distance import geodesic
 
 db = SQLAlchemy()
 
@@ -52,8 +53,6 @@ def geocode_address(address):
         print("Geocoding error:", e)
     return None
 
-import re
-
 def is_valid_address(address):
     """Returns True if address includes a street name and a 5-digit ZIP code."""
     # Checks: at least 2 words + a 5-digit number
@@ -61,6 +60,16 @@ def is_valid_address(address):
     has_zip = bool(re.search(r'\b\d{5}\b', address))
     return has_street and has_zip
 
+#the radar map
+def compute_proximity_km(user1, user2):
+    loc1 = geocode_address(user1.location)
+    loc2 = geocode_address(user2.location)
+    if loc1 and loc2:
+        return geodesic(loc1, loc2).km
+    return None
+
+def distance_to_similarity_km(km, cap=5):
+    return max(0, 1 - min(km / cap, 1))
 
 # === MODELS ===
 class User(db.Model):

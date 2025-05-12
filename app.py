@@ -8,6 +8,9 @@ import pandas as pd
 import folium
 from folium.plugins import MarkerCluster
 from ML import get_top_matches_by_school_id
+import plotly.graph_objects as go
+from geopy.distance import geodesic
+from delivery import geocode_address
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24)
@@ -153,6 +156,78 @@ def match_results():
     matches = get_top_matches_by_school_id(preference.school_id)
 
     return render_template('match_results.html', matches=matches)
+
+#ML element further visualization
+@app.route('/api/similarity_radar/<school_id>', methods=['GET'])
+def similarity_radar_json(school_id):
+    from models import UserPreference
+    # from delivery import get_top_matches_by_school_id
+
+    base_user = UserPreference.query.filter_by(school_id=school_id).first()
+    matches = get_top_matches_by_school_id(school_id, top_k=3)
+
+    categories = [
+        "Asian", "Italian", "Mexican", "Middle Eastern",
+        "American", "Fast Casual", "Spice", "Budget", "Proximity"
+    ]
+    def normalize(val, max_val):
+        return min(val/max_val, 1)
+
+    def user_vector(u):
+        base = u.to_vector().astype(float).tolist()
+        dist_km = geodesic(geocode_address(base_user.location), geocode_address(u.location)).km
+        base.append(max(0, 1 - min(dist_km / 5, 1)))  # proximity similarity
+        return base
+
+    fig = go.Figure()
+
+    # fig.add_trace(go.Scatterpolar(
+    #     r=user_vector(base_user) + [user_vector(base_user)[0]],
+    #     theta=categories + [categories[0]],
+    #     fill='toself',
+    #     name='You'
+    # ))
+
+    # for match_user, _ in matches:
+    #     fig.add_trace(go.Scatterpolar(
+    #         r=user_vector(match_user) + [user_vector(match_user)[0]],
+    #         theta=categories + [categories[0]],
+    #         name=match_user.school_id
+    #     ))
+    v = user_vector(base_user)
+    fig.add_trace(go.Scatterpolar(
+        r=v + [v[0]],
+        theta=categories + [categories[0]],
+        fill='toself',
+        name="You"
+    ))
+
+    for match_user, _ in matches:
+        v = user_vector(match_user)
+        if not v: continue
+        fig.add_trace(go.Scatterpolar(
+            r=v + [v[0]],
+            theta=categories + [categories[0]],
+            name=match_user.school_id
+        ))
+
+
+
+
+    fig.update_layout(
+        polar=dict(radialaxis=dict(visible=True, range=[0, 3])),
+        showlegend=True,
+        title="Similarity Comparison Radar Chart"
+    )
+    print("User vector (len={}):".format(len(user_vector(base_user) + [user_vector(base_user)[0]])))
+    print("Categories (len={}):".format(len(categories + [categories[0]])))
+
+    return jsonify(fig.to_plotly_json())
+
+@app.route('/similarity_radar/<school_id>')
+def similarity_radar_page(school_id):
+    return render_template('similarity_radar.html', school_id=school_id)
+
 
 
 from datetime import datetime, timedelta

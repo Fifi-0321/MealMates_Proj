@@ -8,4 +8,4 @@ scikit-learn>=1.0
 matplotlib>=3.4
 folium>=0.14.0
 geopy>=2.3.0
-openrouteservice>=2.3
+plotly>=5.0
