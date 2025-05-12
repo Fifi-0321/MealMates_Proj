@@ -40,6 +40,7 @@ with app.app_context():
             continue  # skip this entry
 
         new_pref = UserPreference(
+            # name = row[""]
             school_id=row["School ID"],
             location=row.get("Where do you live?", ""),
             eat_time=row.get("When do you usually eat?", ""),
